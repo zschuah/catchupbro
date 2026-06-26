@@ -99,7 +99,7 @@ export default function Dashboard({ loaderData }: Route.ComponentProps) {
 
   return (
     <main className="bg-base-200 min-h-screen pb-24">
-      <header className="bg-base-100 sticky top-0 z-10 shadow-sm">
+      <header className="bg-base-100 sticky top-0 z-20 shadow-sm">
         <div className="mx-auto flex max-w-md items-center justify-between p-4">
           <div>
             <h1 className="text-xl font-bold">Hi, {active.profileName}!</h1>
@@ -181,7 +181,7 @@ export default function Dashboard({ loaderData }: Route.ComponentProps) {
             <div className="flex flex-col gap-4">
               {expenseGroups.map((group) => (
                 <div key={group.date}>
-                  <h3 className="text-base-content/60 mb-1 px-1 text-xs font-semibold uppercase">
+                  <h3 className="text-base-content/60 sticky top-20 z-10 bg-base-200 py-1 px-1 text-xs font-semibold uppercase">
                     {group.label}
                   </h3>
                   <ul className="flex flex-col gap-2">
@@ -207,7 +207,7 @@ export default function Dashboard({ loaderData }: Route.ComponentProps) {
       {/* Add expense FAB */}
       <Link
         to={`/trip/${tripCode}/expense`}
-        className="btn btn-primary btn-circle btn-lg fixed bottom-6 right-6 shadow-lg"
+        className="btn btn-primary btn-circle btn-lg fixed bottom-6 right-6 shadow-lg z-20"
         aria-label="Add expense"
       >
         <FaPlus className="text-xl" />
