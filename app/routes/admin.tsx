@@ -4,13 +4,14 @@ import { Form, Link, useActionData, useNavigation } from "react-router";
 import { createTrip, listTripCodes, tripExists } from "~/api/trips";
 import { CODE_REGEX, CURRENCIES, DEFAULT_CURRENCY } from "~/utils/constants";
 import { sanitizeCode } from "~/utils/helpers";
+import { createMeta } from "~/utils/meta";
 import type { Route } from "./+types/admin";
 
 const SERVER_ERROR =
   "Couldn't reach the server. Check your connection (and that the Firebase URL is set), then try again.";
 
 export function meta(_: Route.MetaArgs) {
-  return [{ title: "Admin · Trips" }];
+  return createMeta({ title: "Admin" });
 }
 
 export async function clientLoader(_: Route.ClientLoaderArgs) {
@@ -65,7 +66,7 @@ export default function Admin({ loaderData }: Route.ComponentProps) {
       <header className="mb-6 flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">
           <FaPlane className="text-primary text-2xl" />
-          <h1 className="text-2xl font-bold">Trips Admin</h1>
+          <h1 className="text-2xl font-bold">Admin</h1>
         </div>
         <Link to="/" className="btn btn-ghost btn-sm" aria-label="Home">
           <FaHouse /> Home

@@ -2,10 +2,11 @@ import { FaUser, FaUserPlus } from "react-icons/fa6";
 import { Form, redirect, useActionData, useNavigation } from "react-router";
 import { addMember, getMembers, getTrip } from "~/api/trips";
 import { setActiveTrip } from "~/utils/helpers";
+import { createMeta } from "~/utils/meta";
 import type { Route } from "./+types/join";
 
 export function meta(_: Route.MetaArgs) {
-  return [{ title: "Who are you?" }];
+  return createMeta({ title: "Who are you?" });
 }
 
 export async function clientLoader({ params }: Route.ClientLoaderArgs) {

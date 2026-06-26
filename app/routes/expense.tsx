@@ -3,10 +3,11 @@ import { addExpense, getTrip, rebalanceTrip } from "~/api/trips";
 import { ExpenseForm } from "~/components/ExpenseForm";
 import { DEFAULT_CURRENCY } from "~/utils/constants";
 import { expenseFromForm, getActiveTrip } from "~/utils/helpers";
+import { createMeta } from "~/utils/meta";
 import type { Route } from "./+types/expense";
 
 export function meta(_: Route.MetaArgs) {
-  return [{ title: "Add expense" }];
+  return createMeta({ title: "Add expense" });
 }
 
 export async function clientLoader({ params }: Route.ClientLoaderArgs) {

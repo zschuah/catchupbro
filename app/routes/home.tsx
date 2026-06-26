@@ -4,13 +4,11 @@ import { Link, useNavigate } from "react-router";
 import { getTrip } from "~/api/trips";
 import { CODE_REGEX } from "~/utils/constants";
 import { clearActiveTrip, getActiveTrip, sanitizeCode } from "~/utils/helpers";
+import { createMeta } from "~/utils/meta";
 import type { Route } from "./+types/home";
 
 export function meta(_: Route.MetaArgs) {
-  return [
-    { title: "Catch Up Bro" },
-    { name: "description", content: "Catch up on trip expenses with friends." },
-  ];
+  return createMeta({ title: "Catch Up Bro", isHomepage: true });
 }
 
 export async function clientLoader(_: Route.ClientLoaderArgs) {

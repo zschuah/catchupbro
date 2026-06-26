@@ -11,11 +11,12 @@ import {
   suggestPayments,
   todayISO,
 } from "~/utils/helpers";
+import { createMeta } from "~/utils/meta";
 import type { Expense } from "~/utils/types";
 import type { Route } from "./+types/dashboard";
 
 export function meta({ params }: Route.MetaArgs) {
-  return [{ title: `Trip ${params.tripCode}` }];
+  return createMeta({ title: `Trip ${params.tripCode}` });
 }
 
 export async function clientLoader({ params }: Route.ClientLoaderArgs) {

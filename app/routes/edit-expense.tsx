@@ -9,10 +9,11 @@ import {
 import { ExpenseForm } from "~/components/ExpenseForm";
 import { DEFAULT_CURRENCY } from "~/utils/constants";
 import { expenseFromForm, getActiveTrip } from "~/utils/helpers";
+import { createMeta } from "~/utils/meta";
 import type { Route } from "./+types/edit-expense";
 
 export function meta(_: Route.MetaArgs) {
-  return [{ title: "Edit expense" }];
+  return createMeta({ title: "Edit expense" });
 }
 
 export async function clientLoader({ params }: Route.ClientLoaderArgs) {
