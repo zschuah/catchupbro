@@ -19,6 +19,9 @@ export function createMeta({
     { property: "og:type", content: "website" },
     { property: "og:title", content: fullTitle },
     { property: "og:description", content: description },
-    { property: "og:image", content: "/passport.png" },
+    {
+      property: "og:image",
+      content: "https://catchupbro.netlify.app/passport.png",
+    },
   ];
 }
