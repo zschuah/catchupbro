@@ -26,7 +26,7 @@ export function ExpenseRow({
   return (
     <Link
       to={`/trip/${tripCode}/expense/${id}`}
-      className="bg-base-100 hover:bg-base-200 flex items-center gap-3 rounded-box p-3 transition-colors"
+      className="bg-base-100 hover:bg-base-300 flex items-center gap-3 rounded-box p-3 transition-colors"
     >
       <div
         className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-lg ${
