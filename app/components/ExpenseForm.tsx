@@ -3,6 +3,7 @@ import { Form, Link, useNavigation } from "react-router";
 import { FaArrowLeft, FaTrash } from "react-icons/fa6";
 import { CategoryPicker } from "./CategoryPicker";
 import { categoryForDescription, OTHER_CATEGORY_KEY } from "~/utils/constants";
+import { todayISO } from "~/utils/helpers";
 import type { Expense, Member } from "~/utils/types";
 
 interface ExpenseFormProps {
@@ -29,9 +30,12 @@ export function ExpenseForm({
     : "food";
   const [category, setCategory] = useState(initialCategory);
   const [customText, setCustomText] = useState(
-    initial && initialCategory === OTHER_CATEGORY_KEY ? initial.description : "",
+    initial && initialCategory === OTHER_CATEGORY_KEY
+      ? initial.description
+      : "",
   );
   const [amount, setAmount] = useState(initial ? String(initial.amount) : "");
+  const [date, setDate] = useState(initial?.date ?? todayISO());
   const [paidBy, setPaidBy] = useState(initial?.paidBy ?? activeProfileId);
 
   // Set of currently-checked profileIds. For a new expense, everyone is
@@ -83,7 +87,7 @@ export function ExpenseForm({
           {/* Amount */}
           <label className="flex flex-col">
             <span className="text-sm mb-1">Amount</span>
-            <div className="input flex items-center gap-2">
+            <div className="input flex items-center gap-2 w-full">
               <span className="text-base-content/60">{currency}</span>
               <input
                 name="amount"
@@ -98,6 +102,19 @@ export function ExpenseForm({
                 required
               />
             </div>
+          </label>
+
+          {/* Date */}
+          <label className="flex flex-col">
+            <span className="text-sm mb-1">Date</span>
+            <input
+              name="date"
+              type="date"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+              className="input w-full"
+              required
+            />
           </label>
 
           {/* Category */}
@@ -179,7 +196,9 @@ export function ExpenseForm({
               formNoValidate
               disabled={isBusy}
               onClick={(e) => {
-                if (!window.confirm("Delete this expense? This can't be undone.")) {
+                if (
+                  !window.confirm("Delete this expense? This can't be undone.")
+                ) {
                   e.preventDefault();
                 }
               }}

@@ -1,10 +1,20 @@
+import dayjs from "dayjs";
 import {
   CATEGORIES,
   DEFAULT_CURRENCY,
   OTHER_CATEGORY_KEY,
   STORAGE_KEY,
 } from "./constants";
-import type { ActiveTrip, Expense, Settlement, Trip } from "./types";
+import type {
+  ActiveTrip,
+  Expense,
+  ExpenseGroup,
+  Settlement,
+  Trip,
+} from "./types";
+
+/** The stored date format for expenses. */
+const DATE_FORMAT = "YYYY-MM-DD";
 
 // ----------------------------------------------------------------------------
 // localStorage (active trip identity)
@@ -47,6 +57,20 @@ export function formatCurrency(
   const value = (Number.isFinite(amount) ? amount : 0).toFixed(2);
   // Multi-char codes (e.g. "SGD") read better with a space.
   return symbol.length > 1 ? `${symbol} ${value}` : `${symbol}${value}`;
+}
+
+// ----------------------------------------------------------------------------
+// Dates
+// ----------------------------------------------------------------------------
+
+/** Today as a "YYYY-MM-DD" string (local time). */
+export function todayISO(): string {
+  return dayjs().format(DATE_FORMAT);
+}
+
+/** Format a "YYYY-MM-DD" date for a group header, e.g. "Fri, 26 Jun". */
+export function formatDayLabel(date: string): string {
+  return dayjs(date).format("ddd, D MMM");
 }
 
 const round2 = (n: number) => Math.round(n * 100) / 100;
@@ -143,7 +167,35 @@ export function expenseFromForm(form: FormData): Expense {
     amount: Number(form.get("amount")),
     paidBy: String(form.get("paidBy") ?? ""),
     splitAmong,
+    date: String(form.get("date") ?? "").trim() || todayISO(),
     timestamp: Date.now(),
     isPayment: false,
   };
+}
+
+/**
+ * Group expense entries by the day they happened (`date`), newest day first.
+ * Within a day, order by `timestamp` (log time) as a tiebreaker — note `date`
+ * can be backdated, so it may differ from the timestamp's day. Entries are
+ * [id, expense] pairs.
+ */
+export function groupExpensesByDate(
+  entries: Array<[string, Expense]>,
+): ExpenseGroup[] {
+  const sorted = [...entries].sort((a, b) => {
+    const byDate = dayjs(b[1].date).diff(a[1].date);
+    return byDate !== 0 ? byDate : b[1].timestamp - a[1].timestamp;
+  });
+
+  const groups: ExpenseGroup[] = [];
+  for (const entry of sorted) {
+    const date = entry[1].date;
+    let group = groups[groups.length - 1];
+    if (!group || group.date !== date) {
+      group = { date, label: formatDayLabel(date), items: [] };
+      groups.push(group);
+    }
+    group.items.push(entry);
+  }
+  return groups;
 }

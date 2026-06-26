@@ -8,7 +8,9 @@ import {
   computeBalances,
   formatCurrency,
   getActiveTrip,
+  groupExpensesByDate,
   suggestPayments,
+  todayISO,
 } from "~/utils/helpers";
 import type { Expense } from "~/utils/types";
 
@@ -30,9 +32,8 @@ export async function clientLoader({ params }: Route.ClientLoaderArgs) {
   }
 
   const members = trip.members ?? {};
-  const expenses = Object.entries(trip.expenses ?? {}).sort(
-    ([, a], [, b]) => b.timestamp - a.timestamp,
-  );
+  // Ordering/grouping happens in groupExpensesByDate on the client.
+  const expenses = Object.entries(trip.expenses ?? {});
   const balances = computeBalances(trip);
   const settlements = suggestPayments(balances);
 
@@ -66,6 +67,7 @@ export async function clientAction({
     amount,
     paidBy: from,
     splitAmong: { [to]: true },
+    date: todayISO(),
     timestamp: Date.now(),
     isPayment: true,
   };
@@ -84,6 +86,8 @@ export default function Dashboard({ loaderData }: Route.ComponentProps) {
     myBalance,
     currency,
   } = loaderData;
+
+  const expenseGroups = groupExpensesByDate(expenses);
 
   const balanceLabel =
     myBalance > 0.01
@@ -168,24 +172,33 @@ export default function Dashboard({ loaderData }: Route.ComponentProps) {
         {/* Expenses */}
         <section>
           <h2 className="mb-2 text-lg font-semibold">Expenses</h2>
-          {expenses.length === 0 ? (
+          {expenseGroups.length === 0 ? (
             <p className="text-base-content/60 rounded-box bg-base-100 p-4 text-sm">
               No expenses yet. Add the first one!
             </p>
           ) : (
-            <ul className="flex flex-col gap-2">
-              {expenses.map(([id, expense]) => (
-                <li key={id}>
-                  <ExpenseRow
-                    id={id}
-                    expense={expense}
-                    members={members}
-                    currency={currency}
-                    tripCode={tripCode}
-                  />
-                </li>
+            <div className="flex flex-col gap-4">
+              {expenseGroups.map((group) => (
+                <div key={group.date}>
+                  <h3 className="text-base-content/60 mb-1 px-1 text-xs font-semibold uppercase">
+                    {group.label}
+                  </h3>
+                  <ul className="flex flex-col gap-2">
+                    {group.items.map(([id, expense]) => (
+                      <li key={id}>
+                        <ExpenseRow
+                          id={id}
+                          expense={expense}
+                          members={members}
+                          currency={currency}
+                          tripCode={tripCode}
+                        />
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               ))}
-            </ul>
+            </div>
           )}
         </section>
       </div>

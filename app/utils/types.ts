@@ -15,6 +15,9 @@ export interface Expense {
   amount: number;
   paidBy: string;
   splitAmong: Record<string, true>;
+  /** The day the expense happened, as "YYYY-MM-DD". */
+  date: string;
+  /** When the expense was logged (ms epoch) — used for intra-day ordering. */
   timestamp: number;
   isPayment: boolean;
 }
@@ -45,6 +48,13 @@ export interface Settlement {
   from: string;
   to: string;
   amount: number;
+}
+
+/** Expenses for one day, grouped for the dashboard. `items` are [id, expense]. */
+export interface ExpenseGroup {
+  date: string;
+  label: string;
+  items: Array<[string, Expense]>;
 }
 
 /** An expense category rendered in the fast-log category grid. */
