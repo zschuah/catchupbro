@@ -26,7 +26,10 @@ export async function clientLoader({ params }: Route.ClientLoaderArgs) {
   return { tripCode, profiles };
 }
 
-export async function clientAction({ params, request }: Route.ClientActionArgs) {
+export async function clientAction({
+  params,
+  request,
+}: Route.ClientActionArgs) {
   const { tripCode } = params;
   const form = await request.formData();
   const members = await getMembers(tripCode);
@@ -94,20 +97,8 @@ export default function Join({ loaderData }: Route.ComponentProps) {
 
           {result?.duplicate && (
             <div className="alert alert-warning">
-              <span>
-                "{result.duplicate.name}" already exists. Tap it to continue as
-                that person.
-              </span>
-              <Form method="post">
-                <input
-                  type="hidden"
-                  name="profileId"
-                  value={result.duplicate.id}
-                />
-                <button className="btn btn-sm" disabled={isBusy}>
-                  Use {result.duplicate.name}
-                </button>
-              </Form>
+              "{result.duplicate.name}" already exists. Tap it to continue as
+              that person.
             </div>
           )}
 
