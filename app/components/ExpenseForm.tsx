@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { Form, Link, useNavigation } from "react-router";
 import { FaArrowLeft, FaTrash } from "react-icons/fa6";
-import { CategoryPicker } from "./CategoryPicker";
+import { Form, Link, useNavigation } from "react-router";
 import { categoryForDescription, OTHER_CATEGORY_KEY } from "~/utils/constants";
 import { todayISO } from "~/utils/helpers";
 import type { Expense, Member } from "~/utils/types";
+import { CategoryPicker } from "./CategoryPicker";
 
 interface ExpenseFormProps {
   tripCode: string;

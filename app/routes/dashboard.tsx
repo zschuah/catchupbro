@@ -1,8 +1,7 @@
-import { Form, Link, redirect } from "react-router";
 import { FaHouse, FaPlus } from "react-icons/fa6";
-import type { Route } from "./+types/dashboard";
-import { ExpenseRow } from "~/components/ExpenseRow";
+import { Form, Link, redirect } from "react-router";
 import { addExpense, getTrip, rebalanceTrip } from "~/api/trips";
+import { ExpenseRow } from "~/components/ExpenseRow";
 import { DEFAULT_CURRENCY } from "~/utils/constants";
 import {
   computeBalances,
@@ -13,6 +12,7 @@ import {
   todayISO,
 } from "~/utils/helpers";
 import type { Expense } from "~/utils/types";
+import type { Route } from "./+types/dashboard";
 
 export function meta({ params }: Route.MetaArgs) {
   return [{ title: `Trip ${params.tripCode}` }];

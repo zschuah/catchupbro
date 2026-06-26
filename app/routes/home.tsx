@@ -1,10 +1,10 @@
 import { useState, type SubmitEvent } from "react";
-import { Link, useNavigate } from "react-router";
 import { FaArrowRight, FaPlane } from "react-icons/fa6";
-import type { Route } from "./+types/home";
+import { Link, useNavigate } from "react-router";
 import { getTrip } from "~/api/trips";
 import { CODE_REGEX } from "~/utils/constants";
 import { clearActiveTrip, getActiveTrip, sanitizeCode } from "~/utils/helpers";
+import type { Route } from "./+types/home";
 
 export function meta(_: Route.MetaArgs) {
   return [

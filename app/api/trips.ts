@@ -1,5 +1,5 @@
-import type { Expense, Member, Trip } from "~/utils/types";
 import { computeBalances } from "~/utils/helpers";
+import type { Expense, Member, Trip } from "~/utils/types";
 import { fbDelete, fbGet, fbPatch, fbPost, fbPut } from "./firebase";
 
 /** All existing trip codes (shallow read of /trips). */
@@ -18,7 +18,10 @@ export async function tripExists(code: string): Promise<boolean> {
  * Create a new trip. Writes a concrete primitive (createdAt) plus the chosen
  * currency so the code durably persists and shows in the shallow list.
  */
-export async function createTrip(code: string, currency: string): Promise<void> {
+export async function createTrip(
+  code: string,
+  currency: string,
+): Promise<void> {
   await fbPut(`/trips/${code}`, { createdAt: Date.now(), currency });
 }
 

@@ -1,6 +1,4 @@
 import { redirect } from "react-router";
-import type { Route } from "./+types/edit-expense";
-import { ExpenseForm } from "~/components/ExpenseForm";
 import {
   deleteExpense,
   getExpense,
@@ -8,8 +6,10 @@ import {
   rebalanceTrip,
   updateExpense,
 } from "~/api/trips";
+import { ExpenseForm } from "~/components/ExpenseForm";
 import { DEFAULT_CURRENCY } from "~/utils/constants";
 import { expenseFromForm, getActiveTrip } from "~/utils/helpers";
+import type { Route } from "./+types/edit-expense";
 
 export function meta(_: Route.MetaArgs) {
   return [{ title: "Edit expense" }];
@@ -42,7 +42,10 @@ export async function clientLoader({ params }: Route.ClientLoaderArgs) {
   };
 }
 
-export async function clientAction({ params, request }: Route.ClientActionArgs) {
+export async function clientAction({
+  params,
+  request,
+}: Route.ClientActionArgs) {
   const { tripCode, expenseId } = params;
   const form = await request.formData();
 

@@ -1,10 +1,10 @@
 import {
-  FaUtensils,
-  FaCar,
   FaBagShopping,
-  FaUmbrellaBeach,
   FaBed,
+  FaCar,
   FaEllipsis,
+  FaUmbrellaBeach,
+  FaUtensils,
 } from "react-icons/fa6";
 import type { Category } from "./types";
 

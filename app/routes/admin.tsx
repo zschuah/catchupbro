@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { Form, Link, useActionData, useNavigation } from "react-router";
 import { FaHouse, FaPlane } from "react-icons/fa6";
-import type { Route } from "./+types/admin";
+import { Form, Link, useActionData, useNavigation } from "react-router";
 import { createTrip, listTripCodes, tripExists } from "~/api/trips";
 import { CODE_REGEX, CURRENCIES, DEFAULT_CURRENCY } from "~/utils/constants";
 import { sanitizeCode } from "~/utils/helpers";
+import type { Route } from "./+types/admin";
 
 const SERVER_ERROR =
   "Couldn't reach the server. Check your connection (and that the Firebase URL is set), then try again.";
@@ -26,7 +26,8 @@ export async function clientLoader(_: Route.ClientLoaderArgs) {
 export async function clientAction({ request }: Route.ClientActionArgs) {
   const form = await request.formData();
   const code = sanitizeCode(String(form.get("code") ?? ""));
-  const currency = String(form.get("currency") ?? "").trim() || DEFAULT_CURRENCY;
+  const currency =
+    String(form.get("currency") ?? "").trim() || DEFAULT_CURRENCY;
 
   if (!code) return { error: "Please enter a trip code." };
   if (!CODE_REGEX.test(code)) {
@@ -126,7 +127,9 @@ export default function Admin({ loaderData }: Route.ComponentProps) {
 
       {toast && (
         <div className="toast toast-top toast-end">
-          <div className={`alert ${toast.error ? "alert-error" : "alert-success"}`}>
+          <div
+            className={`alert ${toast.error ? "alert-error" : "alert-success"}`}
+          >
             <span>
               {toast.error ? toast.error : `Created trip ${toast.code}.`}
             </span>

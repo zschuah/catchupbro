@@ -1,5 +1,5 @@
-import { Link } from "react-router";
 import { FaMoneyBillTransfer } from "react-icons/fa6";
+import { Link } from "react-router";
 import { categoryForDescription } from "~/utils/constants";
 import { formatCurrency } from "~/utils/helpers";
 import type { Expense, Member } from "~/utils/types";
