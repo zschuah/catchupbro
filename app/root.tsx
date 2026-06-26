@@ -39,6 +39,25 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+        {/* --- HARDCODED FALLBACK META TAGS FOR BOTS --- */}
+        <title>Catch Up Bro</title>
+        <meta
+          name="description"
+          content="Catch up on trip expenses with friends!"
+        />
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="Catch Up Bro" />
+        <meta
+          property="og:description"
+          content="Catch up on trip expenses with friends!"
+        />
+        <meta
+          property="og:image"
+          content="https://catchupbro.netlify.app/apple-touch-icon.png"
+        />
+        {/* -------------------------------------------- */}
+
         <Meta />
         <Links />
       </head>
