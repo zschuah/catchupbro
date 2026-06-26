@@ -114,10 +114,13 @@ export default function Admin({ loaderData }: Route.ComponentProps) {
       ) : codes.length === 0 ? (
         <p className="text-base-content/60">No trips yet.</p>
       ) : (
-        <ul className="menu bg-base-200 rounded-box">
+        <ul className="menu rounded-box flex flex-row gap-2">
           {codes.map((code) => (
             <li key={code}>
-              <Link to={`/trip/${code}`} className="font-mono">
+              <Link
+                to={`/trip/${code}`}
+                className="font-mono rounded-box bg-base-300"
+              >
                 {code}
               </Link>
             </li>

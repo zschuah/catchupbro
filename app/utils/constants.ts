@@ -26,6 +26,7 @@ export const CURRENCIES = [
   "IDR",
   "MYR",
   "THB",
+  "VND",
 ] as const;
 
 /** Default currency symbol when none is chosen. */
