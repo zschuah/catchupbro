@@ -15,7 +15,7 @@ export const STORAGE_KEY = "activeTrip";
 export const CODE_REGEX = /^[A-Z0-9]+$/;
 
 /** Suggested currency symbols for the admin picker (free text also allowed). */
-export const CURRENCIES = ["$", "€", "£", "¥", "SGD"] as const;
+export const CURRENCIES = ["$", "€", "£", "¥", "₩"] as const;
 
 /** Default currency symbol when none is chosen. */
 export const DEFAULT_CURRENCY = "$";

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Form, Link, useActionData, useNavigation } from "react-router";
-import { FaPlane } from "react-icons/fa6";
+import { FaHouse, FaPlane } from "react-icons/fa6";
 import type { Route } from "./+types/admin";
 import { createTrip, listTripCodes, tripExists } from "~/api/trips";
 import { CODE_REGEX, CURRENCIES, DEFAULT_CURRENCY } from "~/utils/constants";
@@ -61,9 +61,14 @@ export default function Admin({ loaderData }: Route.ComponentProps) {
 
   return (
     <main className="mx-auto max-w-2xl p-6">
-      <header className="mb-6 flex items-center gap-2">
-        <FaPlane className="text-primary text-2xl" />
-        <h1 className="text-2xl font-bold">Trips Admin</h1>
+      <header className="mb-6 flex items-center justify-between gap-2">
+        <div className="flex items-center gap-2">
+          <FaPlane className="text-primary text-2xl" />
+          <h1 className="text-2xl font-bold">Trips Admin</h1>
+        </div>
+        <Link to="/" className="btn btn-ghost btn-sm" aria-label="Home">
+          <FaHouse /> Home
+        </Link>
       </header>
 
       <Form method="post" className="mb-2 flex flex-wrap gap-2">
