@@ -2,6 +2,7 @@ import { redirect } from "react-router";
 import type { Route } from "./+types/edit-expense";
 import { ExpenseForm } from "~/components/ExpenseForm";
 import {
+  deleteExpense,
   getExpense,
   getTrip,
   rebalanceTrip,
@@ -43,8 +44,15 @@ export async function clientLoader({ params }: Route.ClientLoaderArgs) {
 
 export async function clientAction({ params, request }: Route.ClientActionArgs) {
   const { tripCode, expenseId } = params;
-  const expense = expenseFromForm(await request.formData());
+  const form = await request.formData();
 
+  if (form.get("intent") === "delete") {
+    await deleteExpense(tripCode, expenseId);
+    await rebalanceTrip(tripCode);
+    throw redirect(`/trip/${tripCode}`);
+  }
+
+  const expense = expenseFromForm(form);
   if (!(expense.amount > 0) || Object.keys(expense.splitAmong).length === 0) {
     return { error: "Enter an amount and pick at least one person." };
   }

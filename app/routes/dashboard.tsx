@@ -1,11 +1,10 @@
-import { Form, Link, redirect, useNavigate } from "react-router";
-import { FaPlus, FaRightFromBracket } from "react-icons/fa6";
+import { Form, Link, redirect } from "react-router";
+import { FaHouse, FaPlus } from "react-icons/fa6";
 import type { Route } from "./+types/dashboard";
 import { ExpenseRow } from "~/components/ExpenseRow";
 import { addExpense, getTrip, rebalanceTrip } from "~/api/trips";
 import { DEFAULT_CURRENCY } from "~/utils/constants";
 import {
-  clearActiveTrip,
   computeBalances,
   formatCurrency,
   getActiveTrip,
@@ -75,12 +74,6 @@ export async function clientAction({ params, request }: Route.ClientActionArgs) 
 export default function Dashboard({ loaderData }: Route.ComponentProps) {
   const { tripCode, active, members, expenses, settlements, myBalance, currency } =
     loaderData;
-  const navigate = useNavigate();
-
-  const handleLeave = () => {
-    clearActiveTrip();
-    navigate("/");
-  };
 
   const balanceLabel =
     myBalance > 0.01
@@ -99,9 +92,9 @@ export default function Dashboard({ loaderData }: Route.ComponentProps) {
               Trip <span className="font-mono">{tripCode}</span> · {balanceLabel}
             </p>
           </div>
-          <button onClick={handleLeave} className="btn btn-ghost btn-sm">
-            <FaRightFromBracket /> Leave
-          </button>
+          <Link to="/" className="btn btn-ghost btn-sm" aria-label="Home">
+            <FaHouse /> Home
+          </Link>
         </div>
       </header>
 

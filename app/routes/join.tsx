@@ -2,7 +2,7 @@ import { Form, redirect, useActionData, useNavigation } from "react-router";
 import { FaUser, FaUserPlus } from "react-icons/fa6";
 import type { Route } from "./+types/join";
 import { addMember, getMembers, getTrip } from "~/api/trips";
-import { getActiveTrip, setActiveTrip } from "~/utils/helpers";
+import { setActiveTrip } from "~/utils/helpers";
 
 export function meta(_: Route.MetaArgs) {
   return [{ title: "Who are you?" }];
@@ -11,12 +11,8 @@ export function meta(_: Route.MetaArgs) {
 export async function clientLoader({ params }: Route.ClientLoaderArgs) {
   const { tripCode } = params;
 
-  // Already identified on this trip → straight to the dashboard.
-  const active = getActiveTrip();
-  if (active?.tripCode === tripCode && active.profileId) {
-    throw redirect(`/trip/${tripCode}`);
-  }
-
+  // Always ask "who are you?" here — reaching this route is an explicit intent
+  // to (re)identify, even if a different profile is already active for this trip.
   const trip = await getTrip(tripCode);
   if (!trip) {
     throw new Response(`Trip "${tripCode}" not found.`, { status: 404 });

@@ -1,6 +1,6 @@
 import type { Expense, Member, Trip } from "~/utils/types";
 import { computeBalances } from "~/utils/helpers";
-import { fbGet, fbPatch, fbPost, fbPut } from "./firebase";
+import { fbDelete, fbGet, fbPatch, fbPost, fbPut } from "./firebase";
 
 /** All existing trip codes (shallow read of /trips). */
 export async function listTripCodes(): Promise<string[]> {
@@ -62,6 +62,13 @@ export async function getExpense(
   expenseId: string,
 ): Promise<Expense | null> {
   return fbGet<Expense>(`/trips/${code}/expenses/${expenseId}`);
+}
+
+export async function deleteExpense(
+  code: string,
+  expenseId: string,
+): Promise<void> {
+  await fbDelete(`/trips/${code}/expenses/${expenseId}`);
 }
 
 /**

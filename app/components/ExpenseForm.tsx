@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Form, Link, useNavigation } from "react-router";
-import { FaArrowLeft } from "react-icons/fa6";
+import { FaArrowLeft, FaTrash } from "react-icons/fa6";
 import { CategoryPicker } from "./CategoryPicker";
 import { categoryForDescription, OTHER_CATEGORY_KEY } from "~/utils/constants";
 import type { Expense, Member } from "~/utils/types";
@@ -159,6 +159,8 @@ export function ExpenseForm({
 
           <button
             type="submit"
+            name="intent"
+            value="save"
             className="btn btn-primary btn-block"
             disabled={isBusy || !isValid}
           >
@@ -168,6 +170,24 @@ export function ExpenseForm({
                 ? "Save changes"
                 : "Add expense"}
           </button>
+
+          {mode === "edit" && (
+            <button
+              type="submit"
+              name="intent"
+              value="delete"
+              formNoValidate
+              disabled={isBusy}
+              onClick={(e) => {
+                if (!window.confirm("Delete this expense? This can't be undone.")) {
+                  e.preventDefault();
+                }
+              }}
+              className="btn btn-error btn-outline btn-block"
+            >
+              <FaTrash /> Delete expense
+            </button>
+          )}
         </Form>
       </div>
     </main>
