@@ -7,4 +7,5 @@ export default [
   route("trip/:tripCode/expense", "routes/expense.tsx"),
   route("trip/:tripCode/expense/:expenseId", "routes/edit-expense.tsx"),
   route("admin", "routes/admin.tsx"),
+  route("*", "routes/catchall.tsx"),
 ] satisfies RouteConfig;
