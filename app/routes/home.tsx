@@ -86,7 +86,7 @@ export default function Home({ loaderData }: Route.ComponentProps) {
                   onChange={(e) => handleChangeCode(e.target.value)}
                   placeholder="TRIPCODE"
                   aria-label="Trip code"
-                  className="input input-primary join-item w-full uppercase"
+                  className="input input-primary w-full uppercase"
                   autoCapitalize="characters"
                   autoCorrect="off"
                   disabled={isChecking}
