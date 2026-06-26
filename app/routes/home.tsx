@@ -1,5 +1,4 @@
 import type { Route } from "./+types/home";
-import { Welcome } from "../welcome/welcome";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -9,5 +8,10 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function Home() {
-  return <Welcome />;
+  return (
+    <div className="grid place-content-center min-h-screen">
+      <h1 className="text-7xl">Hello</h1>
+      <button className="btn btn-primary">Click me</button>
+    </div>
+  );
 }
