@@ -25,11 +25,6 @@ export function setActiveTrip(value: ActiveTrip): void {
   window.localStorage.setItem(STORAGE_KEY, JSON.stringify(value));
 }
 
-export function clearActiveTrip(): void {
-  if (typeof window === "undefined") return;
-  window.localStorage.removeItem(STORAGE_KEY);
-}
-
 // ----------------------------------------------------------------------------
 // Formatting / validation
 // ----------------------------------------------------------------------------
@@ -40,7 +35,10 @@ export function sanitizeCode(raw: string): string {
 }
 
 /** Prefix a flat amount with the trip's currency symbol (display only). */
-export function formatCurrency(amount: number, symbol = DEFAULT_CURRENCY): string {
+export function formatCurrency(
+  amount: number,
+  symbol = DEFAULT_CURRENCY,
+): string {
   const value = (Number.isFinite(amount) ? amount : 0).toFixed(2);
   // Multi-char codes (e.g. "SGD") read better with a space.
   return symbol.length > 1 ? `${symbol} ${value}` : `${symbol}${value}`;
@@ -83,7 +81,9 @@ export function computeBalances(trip: Trip | null): Record<string, number> {
  * Greedy settlement: repeatedly match the largest debtor to the largest
  * creditor until everyone nets to ~0. Returns "from owes to amount" rows.
  */
-export function suggestPayments(balances: Record<string, number>): Settlement[] {
+export function suggestPayments(
+  balances: Record<string, number>,
+): Settlement[] {
   const EPS = 0.01;
   const creditors = Object.entries(balances)
     .filter(([, b]) => b > EPS)
