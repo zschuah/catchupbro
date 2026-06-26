@@ -47,7 +47,10 @@ export async function clientLoader({ params }: Route.ClientLoaderArgs) {
   };
 }
 
-export async function clientAction({ params, request }: Route.ClientActionArgs) {
+export async function clientAction({
+  params,
+  request,
+}: Route.ClientActionArgs) {
   const { tripCode } = params;
   const form = await request.formData();
   const from = String(form.get("from") ?? "");
@@ -72,8 +75,15 @@ export async function clientAction({ params, request }: Route.ClientActionArgs) 
 }
 
 export default function Dashboard({ loaderData }: Route.ComponentProps) {
-  const { tripCode, active, members, expenses, settlements, myBalance, currency } =
-    loaderData;
+  const {
+    tripCode,
+    active,
+    members,
+    expenses,
+    settlements,
+    myBalance,
+    currency,
+  } = loaderData;
 
   const balanceLabel =
     myBalance > 0.01
@@ -89,7 +99,8 @@ export default function Dashboard({ loaderData }: Route.ComponentProps) {
           <div>
             <h1 className="text-xl font-bold">Hi, {active.profileName}!</h1>
             <p className="text-base-content/60 text-sm">
-              Trip <span className="font-mono">{tripCode}</span> · {balanceLabel}
+              Trip <span className="font-mono">{tripCode}</span> ·{" "}
+              {balanceLabel}
             </p>
           </div>
           <Link to="/" className="btn btn-ghost btn-sm" aria-label="Home">
@@ -108,31 +119,48 @@ export default function Dashboard({ loaderData }: Route.ComponentProps) {
             </p>
           ) : (
             <ul className="flex flex-col gap-2">
-              {settlements.map((s) => (
-                <li
-                  key={`${s.from}-${s.to}`}
-                  className="bg-base-100 rounded-box flex items-center justify-between gap-3 p-3"
-                >
-                  <span className="text-sm">
-                    <span className="font-medium">
-                      {members[s.from]?.name ?? "Unknown"}
-                    </span>{" "}
-                    owes{" "}
-                    <span className="font-medium">
-                      {members[s.to]?.name ?? "Unknown"}
-                    </span>{" "}
-                    <span className="font-semibold">
-                      {formatCurrency(s.amount, currency)}
+              {settlements.map((s) => {
+                const fromName = members[s.from]?.name ?? "Unknown";
+                const toName = members[s.to]?.name ?? "Unknown";
+                // Only the debtor ("I paid") or creditor ("I received") may
+                // record this payment — not an uninvolved third party.
+                const isMine =
+                  s.from === active.profileId || s.to === active.profileId;
+
+                return (
+                  <li
+                    key={`${s.from}-${s.to}`}
+                    className="bg-base-100 rounded-box flex items-center justify-between gap-3 p-3"
+                  >
+                    <span className="text-sm">
+                      <span className="font-medium">{fromName}</span> owes{" "}
+                      <span className="font-medium">{toName}</span>{" "}
+                      <span className="font-semibold">
+                        {formatCurrency(s.amount, currency)}
+                      </span>
                     </span>
-                  </span>
-                  <Form method="post">
-                    <input type="hidden" name="from" value={s.from} />
-                    <input type="hidden" name="to" value={s.to} />
-                    <input type="hidden" name="amount" value={s.amount} />
-                    <button className="btn btn-success btn-sm">Settle up</button>
-                  </Form>
-                </li>
-              ))}
+                    {isMine ? (
+                      <Form method="post">
+                        <input type="hidden" name="from" value={s.from} />
+                        <input type="hidden" name="to" value={s.to} />
+                        <input type="hidden" name="amount" value={s.amount} />
+                        <button className="btn btn-success btn-sm">
+                          Settle up
+                        </button>
+                      </Form>
+                    ) : (
+                      <div
+                        className="tooltip tooltip-bottom tooltip-end"
+                        data-tip={`Only ${fromName} or ${toName} can settle this`}
+                      >
+                        <button className="btn btn-success btn-sm" disabled>
+                          Settle up
+                        </button>
+                      </div>
+                    )}
+                  </li>
+                );
+              })}
             </ul>
           )}
         </section>
