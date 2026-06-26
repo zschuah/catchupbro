@@ -85,7 +85,7 @@ export default function Home({ loaderData }: Route.ComponentProps) {
             <>
               <Link
                 to={`/trip/${active.tripCode}`}
-                className="btn btn-primary btn-block"
+                className="btn btn-primary btn-block min-h-fit"
               >
                 Continue to trip {active.tripCode} as {active.profileName}
               </Link>
