@@ -25,6 +25,11 @@ export function setActiveTrip(value: ActiveTrip): void {
   window.localStorage.setItem(STORAGE_KEY, JSON.stringify(value));
 }
 
+export function clearActiveTrip(): void {
+  if (typeof window === "undefined") return;
+  window.localStorage.removeItem(STORAGE_KEY);
+}
+
 // ----------------------------------------------------------------------------
 // Formatting / validation
 // ----------------------------------------------------------------------------

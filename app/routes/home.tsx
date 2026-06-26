@@ -4,7 +4,7 @@ import { FaArrowRight, FaPlane } from "react-icons/fa6";
 import type { Route } from "./+types/home";
 import { getTrip } from "~/api/trips";
 import { CODE_REGEX } from "~/utils/constants";
-import { getActiveTrip, sanitizeCode } from "~/utils/helpers";
+import { clearActiveTrip, getActiveTrip, sanitizeCode } from "~/utils/helpers";
 
 export function meta(_: Route.MetaArgs) {
   return [
@@ -14,7 +14,23 @@ export function meta(_: Route.MetaArgs) {
 }
 
 export async function clientLoader(_: Route.ClientLoaderArgs) {
-  return { active: getActiveTrip() };
+  const active = getActiveTrip();
+  if (!active) return { active: null };
+
+  try {
+    // Drop the stale identity (so we don't show a dead "Continue" button) when
+    // either the trip was deleted, or our profile no longer exists within it.
+    // On a network error we keep it — an outage isn't proof anything is gone.
+    const trip = await getTrip(active.tripCode);
+    if (!trip || !trip.members?.[active.profileId]) {
+      clearActiveTrip();
+      return { active: null };
+    }
+  } catch {
+    // Server unreachable — leave the active trip untouched.
+  }
+
+  return { active };
 }
 
 export default function Home({ loaderData }: Route.ComponentProps) {
