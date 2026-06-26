@@ -8,8 +8,8 @@ import { clearActiveTrip, getActiveTrip, sanitizeCode } from "~/utils/helpers";
 
 export function meta(_: Route.MetaArgs) {
   return [
-    { title: "Splitwiser" },
-    { name: "description", content: "Split trip expenses with friends." },
+    { title: "Catch Up Bro" },
+    { name: "description", content: "Catch up on trip expenses with friends." },
   ];
 }
 
@@ -78,7 +78,7 @@ export default function Home({ loaderData }: Route.ComponentProps) {
         <div className="card-body gap-4">
           <div className="flex items-center justify-center gap-2">
             <FaPlane className="text-primary text-3xl" />
-            <h1 className="text-3xl font-bold">Splitwiser</h1>
+            <h1 className="text-3xl font-bold">Catch Up Bro</h1>
           </div>
 
           {active && (

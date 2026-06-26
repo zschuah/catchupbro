@@ -54,7 +54,16 @@ export function formatCurrency(
   amount: number,
   symbol = DEFAULT_CURRENCY,
 ): string {
-  const value = (Number.isFinite(amount) ? amount : 0).toFixed(2);
+  const cleanAmount = Number.isFinite(amount) ? amount : 0;
+
+  // If it's a whole number, allow 0 decimals. If it has decimals, force exactly 2.
+  const hasDecimals = cleanAmount % 1 !== 0;
+
+  const value = new Intl.NumberFormat("en-US", {
+    minimumFractionDigits: hasDecimals ? 2 : 0,
+    maximumFractionDigits: 2,
+  }).format(cleanAmount);
+
   // Multi-char codes (e.g. "SGD") read better with a space.
   return symbol.length > 1 ? `${symbol} ${value}` : `${symbol}${value}`;
 }
