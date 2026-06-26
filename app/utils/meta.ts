@@ -21,7 +21,7 @@ export function createMeta({
     { property: "og:description", content: description },
     {
       property: "og:image",
-      content: "https://catchupbro.netlify.app/passport.png",
+      content: "/apple-touch-icon.png",
     },
   ];
 }
