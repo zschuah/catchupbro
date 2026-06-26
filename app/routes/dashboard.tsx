@@ -1,0 +1,182 @@
+import { Form, Link, redirect, useNavigate } from "react-router";
+import { FaPlus, FaRightFromBracket } from "react-icons/fa6";
+import type { Route } from "./+types/dashboard";
+import { ExpenseRow } from "~/components/ExpenseRow";
+import { addExpense, getTrip, rebalanceTrip } from "~/api/trips";
+import { DEFAULT_CURRENCY } from "~/utils/constants";
+import {
+  clearActiveTrip,
+  computeBalances,
+  formatCurrency,
+  getActiveTrip,
+  suggestPayments,
+} from "~/utils/helpers";
+import type { Expense } from "~/utils/types";
+
+export function meta({ params }: Route.MetaArgs) {
+  return [{ title: `Trip ${params.tripCode}` }];
+}
+
+export async function clientLoader({ params }: Route.ClientLoaderArgs) {
+  const { tripCode } = params;
+
+  const active = getActiveTrip();
+  if (!active || active.tripCode !== tripCode || !active.profileId) {
+    throw redirect(`/trip/${tripCode}/join`);
+  }
+
+  const trip = await getTrip(tripCode);
+  if (!trip) {
+    throw new Response(`Trip "${tripCode}" not found.`, { status: 404 });
+  }
+
+  const members = trip.members ?? {};
+  const expenses = Object.entries(trip.expenses ?? {}).sort(
+    ([, a], [, b]) => b.timestamp - a.timestamp,
+  );
+  const balances = computeBalances(trip);
+  const settlements = suggestPayments(balances);
+
+  return {
+    tripCode,
+    active,
+    members,
+    expenses,
+    settlements,
+    myBalance: balances[active.profileId] ?? 0,
+    currency: trip.currency ?? DEFAULT_CURRENCY,
+  };
+}
+
+export async function clientAction({ params, request }: Route.ClientActionArgs) {
+  const { tripCode } = params;
+  const form = await request.formData();
+  const from = String(form.get("from") ?? "");
+  const to = String(form.get("to") ?? "");
+  const amount = Number(form.get("amount"));
+
+  if (!from || !to || !(amount > 0)) {
+    return { error: "Invalid settlement." };
+  }
+
+  const payment: Expense = {
+    description: "Settlement",
+    amount,
+    paidBy: from,
+    splitAmong: { [to]: true },
+    timestamp: Date.now(),
+    isPayment: true,
+  };
+  await addExpense(tripCode, payment);
+  await rebalanceTrip(tripCode);
+  return { ok: true };
+}
+
+export default function Dashboard({ loaderData }: Route.ComponentProps) {
+  const { tripCode, active, members, expenses, settlements, myBalance, currency } =
+    loaderData;
+  const navigate = useNavigate();
+
+  const handleLeave = () => {
+    clearActiveTrip();
+    navigate("/");
+  };
+
+  const balanceLabel =
+    myBalance > 0.01
+      ? `You are owed ${formatCurrency(myBalance, currency)}`
+      : myBalance < -0.01
+        ? `You owe ${formatCurrency(-myBalance, currency)}`
+        : "You're all settled up";
+
+  return (
+    <main className="bg-base-200 min-h-screen pb-24">
+      <header className="bg-base-100 sticky top-0 z-10 shadow-sm">
+        <div className="mx-auto flex max-w-md items-center justify-between p-4">
+          <div>
+            <h1 className="text-xl font-bold">Hi, {active.profileName}!</h1>
+            <p className="text-base-content/60 text-sm">
+              Trip <span className="font-mono">{tripCode}</span> · {balanceLabel}
+            </p>
+          </div>
+          <button onClick={handleLeave} className="btn btn-ghost btn-sm">
+            <FaRightFromBracket /> Leave
+          </button>
+        </div>
+      </header>
+
+      <div className="mx-auto flex max-w-md flex-col gap-6 p-4">
+        {/* Suggested payments */}
+        <section>
+          <h2 className="mb-2 text-lg font-semibold">Suggested payments</h2>
+          {settlements.length === 0 ? (
+            <p className="text-base-content/60 rounded-box bg-base-100 p-4 text-sm">
+              Everyone's settled up. 🎉
+            </p>
+          ) : (
+            <ul className="flex flex-col gap-2">
+              {settlements.map((s) => (
+                <li
+                  key={`${s.from}-${s.to}`}
+                  className="bg-base-100 rounded-box flex items-center justify-between gap-3 p-3"
+                >
+                  <span className="text-sm">
+                    <span className="font-medium">
+                      {members[s.from]?.name ?? "Unknown"}
+                    </span>{" "}
+                    owes{" "}
+                    <span className="font-medium">
+                      {members[s.to]?.name ?? "Unknown"}
+                    </span>{" "}
+                    <span className="font-semibold">
+                      {formatCurrency(s.amount, currency)}
+                    </span>
+                  </span>
+                  <Form method="post">
+                    <input type="hidden" name="from" value={s.from} />
+                    <input type="hidden" name="to" value={s.to} />
+                    <input type="hidden" name="amount" value={s.amount} />
+                    <button className="btn btn-success btn-sm">Settle up</button>
+                  </Form>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+
+        {/* Expenses */}
+        <section>
+          <h2 className="mb-2 text-lg font-semibold">Expenses</h2>
+          {expenses.length === 0 ? (
+            <p className="text-base-content/60 rounded-box bg-base-100 p-4 text-sm">
+              No expenses yet. Add the first one!
+            </p>
+          ) : (
+            <ul className="flex flex-col gap-2">
+              {expenses.map(([id, expense]) => (
+                <li key={id}>
+                  <ExpenseRow
+                    id={id}
+                    expense={expense}
+                    members={members}
+                    currency={currency}
+                    tripCode={tripCode}
+                  />
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+      </div>
+
+      {/* Add expense FAB */}
+      <Link
+        to={`/trip/${tripCode}/expense`}
+        className="btn btn-primary btn-circle btn-lg fixed bottom-6 right-6 shadow-lg"
+        aria-label="Add expense"
+      >
+        <FaPlus className="text-xl" />
+      </Link>
+    </main>
+  );
+}
