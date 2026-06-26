@@ -79,7 +79,7 @@ export default function Join({ loaderData }: Route.ComponentProps) {
 
           {profiles.length > 0 && (
             <div className="flex flex-col gap-2">
-              <span className="label-text">Pick your profile</span>
+              <span className="text-sm">Pick your profile</span>
               {profiles.map((p) => (
                 <Form method="post" key={p.id}>
                   <input type="hidden" name="profileId" value={p.id} />
@@ -120,7 +120,7 @@ export default function Join({ loaderData }: Route.ComponentProps) {
               name="name"
               placeholder="Your name"
               aria-label="Your name"
-              className="input input-bordered w-full"
+              className="input w-full"
               required
             />
             <button

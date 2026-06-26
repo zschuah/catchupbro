@@ -62,9 +62,11 @@ export function computeBalances(trip: Trip | null): Record<string, number> {
   // Seed every known member at 0 so people with no activity still appear.
   for (const id of Object.keys(trip?.members ?? {})) balances[id] = 0;
 
-  for (const expense of Object.values(trip?.expenses ?? {})) {
-    const participants = Object.keys(expense.splitAmong ?? {});
-    if (participants.length === 0) continue;
+  const expenses = Object.values(trip?.expenses ?? {}).filter(
+    (expense) => Object.keys(expense.splitAmong ?? {}).length > 0,
+  );
+  for (const expense of expenses) {
+    const participants = Object.keys(expense.splitAmong);
     const share = expense.amount / participants.length;
 
     balances[expense.paidBy] = (balances[expense.paidBy] ?? 0) + expense.amount;

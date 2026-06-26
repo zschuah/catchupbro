@@ -81,9 +81,9 @@ export function ExpenseForm({
           <input type="hidden" name="category" value={category} />
 
           {/* Amount */}
-          <label className="form-control">
-            <span className="label-text mb-1">Amount</span>
-            <div className="input input-bordered flex items-center gap-2">
+          <label className="flex flex-col">
+            <span className="text-sm mb-1">Amount</span>
+            <div className="input flex items-center gap-2">
               <span className="text-base-content/60">{currency}</span>
               <input
                 name="amount"
@@ -101,8 +101,8 @@ export function ExpenseForm({
           </label>
 
           {/* Category */}
-          <div className="form-control">
-            <span className="label-text mb-1">Category</span>
+          <div className="flex flex-col">
+            <span className="text-sm mb-1">Category</span>
             <CategoryPicker value={category} onChange={setCategory} />
             {isOther && (
               <input
@@ -111,20 +111,20 @@ export function ExpenseForm({
                 onChange={(e) => setCustomText(e.target.value)}
                 placeholder="Describe the expense"
                 aria-label="Custom description"
-                className="input input-bordered mt-2 w-full"
+                className="input mt-2 w-full"
                 required
               />
             )}
           </div>
 
           {/* Paid by */}
-          <label className="form-control">
-            <span className="label-text mb-1">Paid by</span>
+          <label className="flex flex-col">
+            <span className="text-sm mb-1">Paid by</span>
             <select
               name="paidBy"
               value={paidBy}
               onChange={(e) => setPaidBy(e.target.value)}
-              className="select select-bordered w-full"
+              className="select w-full"
             >
               {memberEntries.map(([id, m]) => (
                 <option key={id} value={id}>
@@ -135,8 +135,8 @@ export function ExpenseForm({
           </label>
 
           {/* Split among */}
-          <div className="form-control">
-            <span className="label-text mb-1">Split among</span>
+          <div className="flex flex-col">
+            <span className="text-sm mb-1">Split among</span>
             <div className="flex flex-col gap-1">
               {memberEntries.map(([id, m]) => (
                 <label
@@ -151,7 +151,7 @@ export function ExpenseForm({
                     onChange={() => handleToggleSplit(id)}
                     className="checkbox checkbox-primary"
                   />
-                  <span className="label-text">{m.name}</span>
+                  <span className="text-sm">{m.name}</span>
                 </label>
               ))}
             </div>

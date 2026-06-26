@@ -6,13 +6,21 @@ import { createTrip, listTripCodes, tripExists } from "~/api/trips";
 import { CODE_REGEX, CURRENCIES, DEFAULT_CURRENCY } from "~/utils/constants";
 import { sanitizeCode } from "~/utils/helpers";
 
+const SERVER_ERROR =
+  "Couldn't reach the server. Check your connection (and that the Firebase URL is set), then try again.";
+
 export function meta(_: Route.MetaArgs) {
   return [{ title: "Admin · Trips" }];
 }
 
 export async function clientLoader(_: Route.ClientLoaderArgs) {
-  const codes = await listTripCodes();
-  return { codes: codes.sort() };
+  try {
+    const codes = await listTripCodes();
+    return { codes: codes.sort(), loadError: null as string | null };
+  } catch {
+    // Fall back gracefully so the page still renders with an inline notice.
+    return { codes: [] as string[], loadError: SERVER_ERROR };
+  }
 }
 
 export async function clientAction({ request }: Route.ClientActionArgs) {
@@ -24,16 +32,20 @@ export async function clientAction({ request }: Route.ClientActionArgs) {
   if (!CODE_REGEX.test(code)) {
     return { error: "Code must be uppercase letters and numbers only." };
   }
-  if (await tripExists(code)) {
-    return { error: `Trip "${code}" already exists.` };
-  }
 
-  await createTrip(code, currency);
-  return { ok: true as const, code };
+  try {
+    if (await tripExists(code)) {
+      return { error: `Trip "${code}" already exists.` };
+    }
+    await createTrip(code, currency);
+    return { ok: true as const, code };
+  } catch {
+    return { error: SERVER_ERROR };
+  }
 }
 
 export default function Admin({ loaderData }: Route.ComponentProps) {
-  const { codes } = loaderData;
+  const { codes, loadError } = loaderData;
   const result = useActionData<typeof clientAction>();
   const navigation = useNavigation();
   const isCreating = navigation.state !== "idle";
@@ -59,7 +71,7 @@ export default function Admin({ loaderData }: Route.ComponentProps) {
           name="code"
           placeholder="TRIPCODE"
           aria-label="New trip code"
-          className="input input-bordered grow uppercase"
+          className="input grow uppercase"
           autoCapitalize="characters"
           autoCorrect="off"
           onInput={(e) => {
@@ -71,7 +83,7 @@ export default function Admin({ loaderData }: Route.ComponentProps) {
           name="currency"
           aria-label="Currency"
           defaultValue={DEFAULT_CURRENCY}
-          className="select select-bordered w-24"
+          className="select w-24"
         >
           {CURRENCIES.map((c) => (
             <option key={c} value={c}>
@@ -88,10 +100,12 @@ export default function Admin({ loaderData }: Route.ComponentProps) {
         Firebase Console.
       </p>
 
-      <h2 className="mb-2 text-lg font-semibold">
-        Existing trips ({codes.length})
-      </h2>
-      {codes.length === 0 ? (
+      <h2 className="mb-2 text-lg font-semibold">Existing trips</h2>
+      {loadError ? (
+        <div className="alert alert-warning">
+          <span>{loadError}</span>
+        </div>
+      ) : codes.length === 0 ? (
         <p className="text-base-content/60">No trips yet.</p>
       ) : (
         <ul className="menu bg-base-200 rounded-box">
