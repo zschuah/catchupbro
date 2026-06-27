@@ -98,7 +98,7 @@ export default function Dashboard({ loaderData }: Route.ComponentProps) {
         : "You're all settled up";
 
   return (
-    <main className="bg-base-200 min-h-screen pb-24">
+    <main className="bg-base-200 min-h-dvh pb-24">
       <header className="bg-base-100 sticky top-0 z-20 shadow-sm">
         <div className="mx-auto flex max-w-md items-center justify-between p-4">
           <div>

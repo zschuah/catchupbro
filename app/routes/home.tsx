@@ -2,7 +2,7 @@ import { useState, type SubmitEvent } from "react";
 import { FaArrowRight, FaPlane } from "react-icons/fa6";
 import { Link, useNavigate } from "react-router";
 import { getTrip } from "~/api/trips";
-import { CODE_REGEX } from "~/utils/constants";
+import { CODE_REGEX, VERSION_NUMBER } from "~/utils/constants";
 import { clearActiveTrip, getActiveTrip, sanitizeCode } from "~/utils/helpers";
 import { createMeta } from "~/utils/meta";
 import type { Route } from "./+types/home";
@@ -71,7 +71,7 @@ export default function Home({ loaderData }: Route.ComponentProps) {
   };
 
   return (
-    <main className="bg-base-200 flex min-h-screen flex-col items-center justify-center p-6">
+    <main className="bg-base-200 flex min-h-dvh flex-col items-center justify-center p-6">
       <div className="card bg-base-100 w-full max-w-sm shadow-xl">
         <div className="card-body gap-4">
           <div className="flex items-center justify-center gap-2">
@@ -128,6 +128,12 @@ export default function Home({ loaderData }: Route.ComponentProps) {
             {error && <span className="text-error text-sm">{error}</span>}
           </form>
         </div>
+      </div>
+
+      <div className="fixed bottom-5 right-5 md:right-10 select-none">
+        <p className="text-zinc-500/50 font-mono text-xs md:text-sm">
+          {VERSION_NUMBER}
+        </p>
       </div>
     </main>
   );

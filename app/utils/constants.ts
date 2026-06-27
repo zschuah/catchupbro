@@ -8,6 +8,8 @@ import {
 } from "react-icons/fa6";
 import type { Category } from "./types";
 
+export const VERSION_NUMBER = "v1.0.0";
+
 /** localStorage key holding the active ActiveTrip identity. */
 export const STORAGE_KEY = "activeTrip";
 

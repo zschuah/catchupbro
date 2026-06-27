@@ -67,7 +67,7 @@ export function ExpenseForm({
   };
 
   return (
-    <main className="bg-base-200 min-h-screen p-4">
+    <main className="bg-base-200 min-h-dvh p-4">
       <div className="mx-auto max-w-md">
         <header className="mb-4 flex items-center gap-2">
           <Link

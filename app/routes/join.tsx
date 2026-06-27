@@ -67,7 +67,7 @@ export default function Join({ loaderData }: Route.ComponentProps) {
   const isBusy = navigation.state !== "idle";
 
   return (
-    <main className="bg-base-200 flex min-h-screen flex-col items-center justify-center p-6">
+    <main className="bg-base-200 flex min-h-dvh flex-col items-center justify-center p-6">
       <div className="card bg-base-100 w-full max-w-sm shadow-xl">
         <div className="card-body gap-4">
           <div>
