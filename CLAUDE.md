@@ -1,4 +1,4 @@
-# Splitwiser
+# Catch Up Bro
 
 A lightweight, mobile-first Splitwise alternative for splitting expenses on group
 trips. No accounts/auth — a trip is reached by its short **trip code**, and the
@@ -31,6 +31,7 @@ routes in `app/routes.ts`.
 ## Architecture
 
 ### Persistence — Firebase Realtime Database via REST
+
 - Set `VITE_FIREBASE_DB_URL` in `.env` (gitignored) to the RTDB URL (no trailing
   slash). DB rules are open/test-mode — no auth token.
 - [app/api/firebase.ts](app/api/firebase.ts): the axios instance + typed REST verbs
@@ -43,11 +44,13 @@ routes in `app/routes.ts`.
   push-id IS the `profileId` / `expenseId` (we never assign ids ourselves).
 
 ### Identity — localStorage
+
 - Key `activeTrip` = `{ tripCode, profileId, profileName }` (`ActiveTrip` type).
 - Helpers in [app/utils/helpers.ts](app/utils/helpers.ts): `getActiveTrip`,
   `setActiveTrip`, `clearActiveTrip`.
 
 ### Balances — derived, not stored
+
 - **Source of truth is the expense list.** `computeBalances(trip)` recomputes every
   member's net balance from expenses on each load. Positive = owed (creditor),
   negative = owes (debtor).
@@ -83,19 +86,20 @@ intra-day tiebreaker. All money math is flat numbers — no currency conversion.
 
 ## Routes (`app/routes.ts`)
 
-| Path | File | Purpose |
-|------|------|---------|
-| `/` | `home.tsx` | "Continue" button (if `activeTrip`) + trip-code entry |
-| `/trip/:tripCode/join` | `join.tsx` | "Who are you?" — pick/create profile |
-| `/trip/:tripCode` | `dashboard.tsx` | expenses (grouped by day) + suggested payments |
-| `/trip/:tripCode/expense` | `expense.tsx` | add expense |
-| `/trip/:tripCode/expense/:expenseId` | `edit-expense.tsx` | edit/delete expense |
-| `/admin` | `admin.tsx` | list trip codes, create a trip (+ currency). URL-only, no link |
+| Path                                 | File               | Purpose                                                        |
+| ------------------------------------ | ------------------ | -------------------------------------------------------------- |
+| `/`                                  | `home.tsx`         | "Continue" button (if `activeTrip`) + trip-code entry          |
+| `/trip/:tripCode/join`               | `join.tsx`         | "Who are you?" — pick/create profile                           |
+| `/trip/:tripCode`                    | `dashboard.tsx`    | expenses (grouped by day) + suggested payments                 |
+| `/trip/:tripCode/expense`            | `expense.tsx`      | add expense                                                    |
+| `/trip/:tripCode/expense/:expenseId` | `edit-expense.tsx` | edit/delete expense                                            |
+| `/admin`                             | `admin.tsx`        | list trip codes, create a trip (+ currency). URL-only, no link |
 
 Shared components in `app/components/`: `ExpenseForm` (used by add + edit via a
 `mode` prop; submits `intent=save`/`intent=delete`), `CategoryPicker`, `ExpenseRow`.
 
 ### Key flows / edge cases already handled
+
 - **Home code entry** looks up the trip first (spinner + inline error: "doesn't
   exist" vs "couldn't reach server") before navigating.
 - **Stale identity cleanup**: on `/`, if the active trip was deleted OR the active
