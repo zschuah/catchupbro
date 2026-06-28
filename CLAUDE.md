@@ -69,7 +69,8 @@ currency: string            // display symbol only (one per trip), e.g. "$", "�
 createdAt: number
 members:  { $profileId: { name: string, balance: number } }
 expenses: { $expenseId: {
-    description: string,            // category label, or custom text for "Other"
+    category: string,               // category key, e.g. "food" — drives the icon
+    description: string,            // optional free-text note ("" falls back to the category label)
     amount: number,
     paidBy: string,                 // profileId
     splitAmong: { $profileId: true },
@@ -78,6 +79,12 @@ expenses: { $expenseId: {
     isPayment: boolean              // true for settle-up transfers
 } }
 ```
+
+**`category` vs `description`:** `category` is the picked category key and is the
+sole source of the icon (resolved via `categoryByKey`). `description` is an
+optional free-text note available for **every** category — when blank the UI shows
+the category's label instead (`resolveExpenseDisplay` returns `{ category, label }`).
+"Other" is not special; it's just a category whose label reads "Other".
 
 **`date` vs `timestamp`:** they differ on purpose. `date` is the day the expense
 happened (date picker, can be backdated); `timestamp` is when it was logged. The
