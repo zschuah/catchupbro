@@ -2,7 +2,7 @@ import { FaHouse, FaPlus } from "react-icons/fa6";
 import { Form, Link, redirect } from "react-router";
 import { addExpense, getTrip, rebalanceTrip } from "~/api/trips";
 import { ExpenseRow } from "~/components/ExpenseRow";
-import { DEFAULT_CURRENCY } from "~/utils/constants";
+import { DEFAULT_CURRENCY, OTHER_CATEGORY_KEY } from "~/utils/constants";
 import {
   computeBalances,
   formatCurrency,
@@ -64,6 +64,7 @@ export async function clientAction({
   }
 
   const payment: Expense = {
+    category: OTHER_CATEGORY_KEY,
     description: "Settlement",
     amount,
     paidBy: from,

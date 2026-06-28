@@ -11,6 +11,9 @@ export interface Member {
  * `paidBy` is a profileId; `splitAmong` maps profileIds -> true.
  */
 export interface Expense {
+  /** Category key, e.g. "food". Drives the icon. */
+  category: string;
+  /** Optional free-text note. When empty, the category label is shown instead. */
   description: string;
   amount: number;
   paidBy: string;

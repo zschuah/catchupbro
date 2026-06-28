@@ -1,7 +1,6 @@
 import { FaMoneyBillTransfer } from "react-icons/fa6";
 import { Link } from "react-router";
-import { categoryForDescription } from "~/utils/constants";
-import { formatCurrency } from "~/utils/helpers";
+import { formatCurrency, resolveExpenseDisplay } from "~/utils/helpers";
 import type { Expense, Member } from "~/utils/types";
 
 interface ExpenseRowProps {
@@ -19,7 +18,8 @@ export function ExpenseRow({
   currency,
   tripCode,
 }: ExpenseRowProps) {
-  const { Icon } = categoryForDescription(expense.description);
+  const { category, label } = resolveExpenseDisplay(expense);
+  const Icon = category.Icon;
   const paidByName = members[expense.paidBy]?.name ?? "Unknown";
   const splitCount = Object.keys(expense.splitAmong ?? {}).length;
 
@@ -39,7 +39,7 @@ export function ExpenseRow({
       </div>
 
       <div className="min-w-0 grow">
-        <p className="truncate font-medium">{expense.description}</p>
+        <p className="truncate font-medium">{label}</p>
         <p className="text-base-content/60 text-sm">
           {expense.isPayment
             ? `${paidByName} paid`

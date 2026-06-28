@@ -1,12 +1,8 @@
 import dayjs from "dayjs";
-import {
-  CATEGORIES,
-  DEFAULT_CURRENCY,
-  OTHER_CATEGORY_KEY,
-  STORAGE_KEY,
-} from "./constants";
+import { categoryByKey, DEFAULT_CURRENCY, STORAGE_KEY } from "./constants";
 import type {
   ActiveTrip,
+  Category,
   Expense,
   ExpenseGroup,
   Settlement,
@@ -155,24 +151,18 @@ export function suggestPayments(
 }
 
 /**
- * Build an Expense from the fast-log form's submitted fields. The description is
- * the category label, or the custom text when the "Other" category is chosen.
- * `timestamp`/`isPayment` are defaulted here; callers may override (e.g. edits
- * preserve the original timestamp).
+ * Build an Expense from the fast-log form's submitted fields. `category` is the
+ * picked category key; `description` is the optional free-text note (may be empty
+ * for any category). `timestamp`/`isPayment` are defaulted here; callers may
+ * override (e.g. edits preserve the original timestamp).
  */
 export function expenseFromForm(form: FormData): Expense {
-  const categoryKey = String(form.get("category") ?? "");
-  const category = CATEGORIES.find((c) => c.key === categoryKey);
-  let description = category?.label ?? "Other";
-  if (categoryKey === OTHER_CATEGORY_KEY) {
-    description = String(form.get("description") ?? "").trim() || "Other";
-  }
-
   const splitAmong: Record<string, true> = {};
   for (const id of form.getAll("split")) splitAmong[String(id)] = true;
 
   return {
-    description,
+    category: String(form.get("category") ?? ""),
+    description: String(form.get("description") ?? "").trim(),
     amount: Number(form.get("amount")),
     paidBy: String(form.get("paidBy") ?? ""),
     splitAmong,
@@ -180,6 +170,18 @@ export function expenseFromForm(form: FormData): Expense {
     timestamp: Date.now(),
     isPayment: false,
   };
+}
+
+/**
+ * Resolve how an expense renders: its category (for the icon) and the display
+ * label — the free-text description when present, otherwise the category label.
+ */
+export function resolveExpenseDisplay(expense: Expense): {
+  category: Category;
+  label: string;
+} {
+  const category = categoryByKey(expense.category);
+  return { category, label: expense.description.trim() || category.label };
 }
 
 /**

@@ -8,7 +8,7 @@ import {
 } from "react-icons/fa6";
 import type { Category } from "./types";
 
-export const VERSION_NUMBER = "v1.0.0";
+export const VERSION_NUMBER = "v1.0.1";
 
 /** localStorage key holding the active ActiveTrip identity. */
 export const STORAGE_KEY = "activeTrip";
@@ -34,7 +34,7 @@ export const CURRENCIES = [
 /** Default currency symbol when none is chosen. */
 export const DEFAULT_CURRENCY = "$";
 
-/** The six fast-log expense categories. "other" reveals a custom-description input. */
+/** The six fast-log expense categories. Each has an optional free-text description. */
 export const CATEGORIES: Category[] = [
   { key: "food", label: "Food", Icon: FaUtensils },
   { key: "transport", label: "Transport", Icon: FaCar },
@@ -47,13 +47,10 @@ export const CATEGORIES: Category[] = [
 export const OTHER_CATEGORY_KEY = "other";
 
 /**
- * Resolve a category by its stored description. Saved descriptions are either a
- * category label (e.g. "Food") or free text from "Other" — anything that does
- * not match a known label falls back to the "Other" category.
+ * Resolve a category by its stored key. Unknown keys fall back to "Other" so a
+ * row always has an icon.
  */
-export function categoryForDescription(description: string): Category {
-  const match = CATEGORIES.find(
-    (c) => c.label.toLowerCase() === description.trim().toLowerCase(),
-  );
+export function categoryByKey(key: string): Category {
+  const match = CATEGORIES.find((c) => c.key === key);
   return match ?? CATEGORIES[CATEGORIES.length - 1];
 }

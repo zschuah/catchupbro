@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { FaArrowLeft, FaTrash } from "react-icons/fa6";
 import { Form, Link, useNavigation } from "react-router";
-import { categoryForDescription, OTHER_CATEGORY_KEY } from "~/utils/constants";
+import { categoryByKey } from "~/utils/constants";
 import { todayISO } from "~/utils/helpers";
 import type { Expense, Member } from "~/utils/types";
 import { CategoryPicker } from "./CategoryPicker";
@@ -25,15 +25,9 @@ export function ExpenseForm({
 }: ExpenseFormProps) {
   const memberEntries = Object.entries(members);
 
-  const initialCategory = initial
-    ? categoryForDescription(initial.description).key
-    : "food";
+  const initialCategory = initial ? categoryByKey(initial.category).key : "food";
   const [category, setCategory] = useState(initialCategory);
-  const [customText, setCustomText] = useState(
-    initial && initialCategory === OTHER_CATEGORY_KEY
-      ? initial.description
-      : "",
-  );
+  const [description, setDescription] = useState(initial?.description ?? "");
   const [amount, setAmount] = useState(initial ? String(initial.amount) : "");
   const [date, setDate] = useState(initial?.date ?? todayISO());
   const [paidBy, setPaidBy] = useState(initial?.paidBy ?? activeProfileId);
@@ -51,11 +45,7 @@ export function ExpenseForm({
 
   const navigation = useNavigation();
   const isBusy = navigation.state !== "idle";
-  const isOther = category === OTHER_CATEGORY_KEY;
-  const isValid =
-    Number(amount) > 0 &&
-    split.size > 0 &&
-    (!isOther || customText.trim().length > 0);
+  const isValid = Number(amount) > 0 && split.size > 0;
 
   const handleToggleSplit = (id: string) => {
     setSplit((prev) => {
@@ -121,17 +111,14 @@ export function ExpenseForm({
           <div className="flex flex-col">
             <span className="text-sm mb-1">Category</span>
             <CategoryPicker value={category} onChange={setCategory} />
-            {isOther && (
-              <input
-                name="description"
-                value={customText}
-                onChange={(e) => setCustomText(e.target.value)}
-                placeholder="Describe the expense"
-                aria-label="Custom description"
-                className="input mt-2 w-full"
-                required
-              />
-            )}
+            <input
+              name="description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Describe the expense (optional)"
+              aria-label="Description"
+              className="input mt-2 w-full"
+            />
           </div>
 
           {/* Paid by */}
