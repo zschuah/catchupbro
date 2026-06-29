@@ -101,6 +101,7 @@ intra-day tiebreaker. All money math is flat numbers — no currency conversion.
 | `/trip/:tripCode/expense`            | `expense.tsx`      | add expense                                                    |
 | `/trip/:tripCode/expense/:expenseId` | `edit-expense.tsx` | edit/delete expense                                            |
 | `/admin`                             | `admin.tsx`        | list trip codes, create a trip (+ currency). URL-only, no link |
+| `*`                                  | `catchall.tsx`     | `clientLoader` redirects any unknown path back to `/`          |
 
 Shared components in `app/components/`: `ExpenseForm` (used by add + edit via a
 `mode` prop; submits `intent=save`/`intent=delete`), `CategoryPicker`, `ExpenseRow`.
@@ -138,9 +139,10 @@ Shared components in `app/components/`: `ExpenseForm` (used by add + edit via a
 ```
 app/
   api/        firebase.ts (axios + verbs), trips.ts (domain calls)
-  utils/      types.ts, constants.ts (regex, currencies, categories), helpers.ts
+  utils/      types.ts, constants.ts (regex, currencies, categories), helpers.ts,
+              meta.ts (createMeta — title/OG tags for route `meta` exports)
   components/ ExpenseForm.tsx, CategoryPicker.tsx, ExpenseRow.tsx
-  routes/     home, join, dashboard, expense, edit-expense, admin
+  routes/     home, join, dashboard, expense, edit-expense, admin, catchall
   routes.ts   route table
 react-router.config.ts   ssr: false
 ```
